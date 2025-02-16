@@ -10,12 +10,12 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/customers")
-public class customerController {
+public class CustomerController {
     CustomerService customerService = new CustomerService();
 
     // Constructor-based injection (Recommended)
     @Autowired
-    public customerController(CustomerService customerService) {
+    public CustomerController(CustomerService customerService) {
         this.customerService = customerService;
     }
 
