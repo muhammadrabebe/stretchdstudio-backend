@@ -63,26 +63,6 @@ public class Class {
     @JoinColumn(name = "statusid", referencedColumnName = "codelkupid")
     private CodeLkup statusid; // Assuming status is stored in codelkup
 
-    public Class(Integer classId, String className, LocalDateTime startTime, LocalDateTime endTime, Integer maxCapacity, String location, String addWho, LocalDateTime addDate, String editWho, LocalDateTime editDate, Instructor instructor, CodeLkup branchid, String addressOne, String addressTwo, String addressThree, String city, CodeLkup statusid) {
-        this.classId = classId;
-        this.className = className;
-        this.startTime = startTime;
-        this.endTime = endTime;
-        this.maxCapacity = maxCapacity;
-        this.location = location;
-        this.addWho = addWho;
-        this.addDate = addDate;
-        this.editWho = editWho;
-        this.editDate = editDate;
-        this.instructor = instructor;
-        this.branchid = branchid;
-        this.addressOne = addressOne;
-        this.addressTwo = addressTwo;
-        this.addressThree = addressThree;
-        this.city = city;
-        this.statusid = statusid;
-    }
-
     public Integer getClassId() {
         return classId;
     }

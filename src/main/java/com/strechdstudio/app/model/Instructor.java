@@ -47,4 +47,100 @@ public class Instructor {
     @ManyToOne
     @JoinColumn(name = "specializationid", referencedColumnName = "codelkupid")
     private CodeLkup specializationid; // Assuming specialization is stored in codelkup
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public Integer getInstructorId() {
+        return instructorId;
+    }
+
+    public void setInstructorId(Integer instructorId) {
+        this.instructorId = instructorId;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getBio() {
+        return bio;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
+    }
+
+    public String getAddWho() {
+        return addWho;
+    }
+
+    public void setAddWho(String addWho) {
+        this.addWho = addWho;
+    }
+
+    public LocalDateTime getAddDate() {
+        return addDate;
+    }
+
+    public void setAddDate(LocalDateTime addDate) {
+        this.addDate = addDate;
+    }
+
+    public String getEditWho() {
+        return editWho;
+    }
+
+    public void setEditWho(String editWho) {
+        this.editWho = editWho;
+    }
+
+    public LocalDateTime getEditDate() {
+        return editDate;
+    }
+
+    public void setEditDate(LocalDateTime editDate) {
+        this.editDate = editDate;
+    }
+
+    public CodeLkup getStatusid() {
+        return statusid;
+    }
+
+    public void setStatusid(CodeLkup statusid) {
+        this.statusid = statusid;
+    }
+
+    public CodeLkup getSpecializationid() {
+        return specializationid;
+    }
+
+    public void setSpecializationid(CodeLkup specializationid) {
+        this.specializationid = specializationid;
+    }
 }

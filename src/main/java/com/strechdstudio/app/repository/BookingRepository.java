@@ -1,10 +1,9 @@
 package com.strechdstudio.app.repository;
 
-import com.strechdstudio.app.model.Instructor;
+import com.strechdstudio.app.model.Booking;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface InstructorRepository extends JpaRepository<Instructor, Integer> {
-
+public interface BookingRepository extends JpaRepository<Booking, Integer> {
 }
