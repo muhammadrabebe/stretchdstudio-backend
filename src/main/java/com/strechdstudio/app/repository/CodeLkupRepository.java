@@ -14,5 +14,5 @@ public interface CodeLkupRepository extends JpaRepository<CodeLkup, Integer> {
 
     List<CodeLkup> findByListname(String listname);
 
-    Optional<CodeLkup> findByCodelistListnameAndCode(String listname, String code);
+    Optional<CodeLkup> findByListnameAndCode(String listname, String code);
 }

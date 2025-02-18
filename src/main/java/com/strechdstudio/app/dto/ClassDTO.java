@@ -1,69 +1,28 @@
-package com.strechdstudio.app.model;
+package com.strechdstudio.app.dto;
 
-import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "classes")
+public class ClassDTO {
 
-public class Class {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "classid")
     private Integer classId;
-
-    @Column(name = "classname", nullable = false)
     private String className;
-
-    @Column(name = "starttime", nullable = false)
     private LocalDateTime startTime;
-
-    @Column(name = "endtime", nullable = false)
     private LocalDateTime endTime;
-
-    @Column(name = "maxcapacity")
     private Integer maxCapacity;
-
-    @Column(name = "location")
     private String location;
-
-    @ManyToOne
-    @JoinColumn(name = "instructorid", referencedColumnName = "instructorid")
-    private Instructor instructor; // Assuming an Instructor entity exists
-
-    @ManyToOne
-    @JoinColumn(name = "branchid", referencedColumnName = "codelkupid")
-    private CodeLkup branch; // Assuming a CodeLookup entity exists
-
-    @ManyToOne
-    @JoinColumn(name = "statusid", referencedColumnName = "codelkupid")
-    private CodeLkup status; // Assuming status is stored in codelkup
-
-    @Column(name = "addressone")
-    private String addressOne;
-
-    @Column(name = "addresstwo")
-    private String addressTwo;
-
-    @Column(name = "addressthree")
-    private String addressThree;
-
-    @Column(name = "city")
-    private String city;
-
-    @Column(name = "addwho")
     private String addWho;
-
-    @Column(name = "adddate")
     private LocalDateTime addDate;
-
-    @Column(name = "editwho")
     private String editWho;
-
-    @Column(name = "editdate")
     private LocalDateTime editDate;
+    private String addressOne;
+    private String addressTwo;
+    private String addressThree;
+    private String city;
+    private Integer instructorId;
+    private Integer branchId;
+    private Integer statusId;
 
-
+    // Getters and Setters
     public Integer getClassId() {
         return classId;
     }
@@ -144,22 +103,6 @@ public class Class {
         this.editDate = editDate;
     }
 
-    public Instructor getInstructor() {
-        return instructor;
-    }
-
-    public void setInstructor(Instructor instructor) {
-        this.instructor = instructor;
-    }
-
-    public CodeLkup getBranch() {
-        return branch;
-    }
-
-    public void setBranch(CodeLkup branch) {
-        this.branch = branch;
-    }
-
     public String getAddressOne() {
         return addressOne;
     }
@@ -192,11 +135,27 @@ public class Class {
         this.city = city;
     }
 
-    public CodeLkup getStatus() {
-        return status;
+    public Integer getInstructorId() {
+        return instructorId;
     }
 
-    public void setStatus(CodeLkup status) {
-        this.status = status;
+    public void setInstructorId(Integer instructorId) {
+        this.instructorId = instructorId;
+    }
+
+    public Integer getBranchId() {
+        return branchId;
+    }
+
+    public void setBranchId(Integer branchId) {
+        this.branchId = branchId;
+    }
+
+    public Integer getStatusId() {
+        return statusId;
+    }
+
+    public void setStatusId(Integer statusId) {
+        this.statusId = statusId;
     }
 }

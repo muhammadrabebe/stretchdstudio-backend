@@ -42,11 +42,11 @@ public class Instructor {
 
     @ManyToOne
     @JoinColumn(name = "statusid", referencedColumnName = "codelkupid")
-    private CodeLkup statusid; // Assuming status is stored in codelkup
+    private CodeLkup status; // Assuming status is stored in codelkup
 
     @ManyToOne
     @JoinColumn(name = "specializationid", referencedColumnName = "codelkupid")
-    private CodeLkup specializationid; // Assuming specialization is stored in codelkup
+    private CodeLkup specialization; // Assuming specialization is stored in codelkup
 
     public String getPhoneNumber() {
         return phoneNumber;
@@ -78,6 +78,10 @@ public class Instructor {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public String getFullname (){
+        return this.firstName + " " + this.lastName;
     }
 
     public String getEmail() {
@@ -128,19 +132,19 @@ public class Instructor {
         this.editDate = editDate;
     }
 
-    public CodeLkup getStatusid() {
-        return statusid;
+    public CodeLkup getStatus() {
+        return status;
     }
 
-    public void setStatusid(CodeLkup statusid) {
-        this.statusid = statusid;
+    public void setStatus(CodeLkup status) {
+        this.status = status;
     }
 
-    public CodeLkup getSpecializationid() {
-        return specializationid;
+    public CodeLkup getSpecialization() {
+        return specialization;
     }
 
-    public void setSpecializationid(CodeLkup specializationid) {
-        this.specializationid = specializationid;
+    public void setSpecialization(CodeLkup specialization) {
+        this.specialization = specialization;
     }
 }

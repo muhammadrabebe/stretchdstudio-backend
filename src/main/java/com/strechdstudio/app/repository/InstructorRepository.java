@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface InstructorRepository extends JpaRepository<Instructor, Integer> {
-
+    Instructor findByPhoneNumber(String phoneNumber);
 }

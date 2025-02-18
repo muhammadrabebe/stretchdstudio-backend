@@ -44,13 +44,13 @@ public class CodelkupService {
     public CodeLkup saveCodelkup(CodeLkup codeLkup) {
         // check if the listname exists
         Optional<Codelist> codelist = Optional.ofNullable(codelistRepository.findBylistName(codeLkup.getListname()));
-        if(codelist.isPresent()){
+        if(!codelist.isPresent()){
             throw new RuntimeException("The listname given doesn't exist.");
         }
 
         // check if the combination is already existing
         Optional<CodeLkup> existingCodelkup = codeLkupRepository
-                .findByCodelistListnameAndCode(codeLkup.getListname(), codeLkup.getCode());
+                .findByListnameAndCode(codeLkup.getListname(), codeLkup.getCode());
         if (existingCodelkup.isPresent()) {
             throw new RuntimeException("The combination of listname and code already exists.");
         } else {
@@ -58,12 +58,52 @@ public class CodelkupService {
             LocalDateTime currentDate = LocalDateTime.now();
             currentCodelkup.setCode(codeLkup.getCode());
             currentCodelkup.setListname(codeLkup.getListname());
+            currentCodelkup.setDescription(codeLkup.getDescription());
             currentCodelkup.setAddWho(codeLkup.getAddWho());
             currentCodelkup.setAddDate(currentDate);
             currentCodelkup.setEditWho(codeLkup.getEditWho());
             currentCodelkup.setEditDate(currentDate);
 
             return codeLkupRepository.save(currentCodelkup);
+        }
+    }
+
+    // Save a new codelkup
+    public CodeLkup updateCodelkup(CodeLkup codeLkup) {
+        // check if the listname exists
+        Optional<Codelist> codelist = Optional.ofNullable(codelistRepository.findBylistName(codeLkup.getListname()));
+        if(!codelist.isPresent()){
+            throw new RuntimeException("The listname given doesn't exist.");
+        }
+
+        // check if the combination is already existing
+        Optional<CodeLkup> existingCodelkup = codeLkupRepository
+                .findByListnameAndCode(codeLkup.getListname(), codeLkup.getCode());
+        if (existingCodelkup.isPresent()) {
+            throw new RuntimeException("The combination of listname and code already exists.");
+        } else {
+            CodeLkup currentCodelkup = new CodeLkup();
+            LocalDateTime currentDate = LocalDateTime.now();
+            currentCodelkup.setCode(codeLkup.getCode());
+            currentCodelkup.setListname(codeLkup.getListname());
+            currentCodelkup.setDescription(codeLkup.getDescription());
+            currentCodelkup.setAddWho(codeLkup.getAddWho());
+            currentCodelkup.setAddDate(currentDate);
+            currentCodelkup.setEditWho(codeLkup.getEditWho());
+            currentCodelkup.setEditDate(currentDate);
+
+            return codeLkupRepository.save(currentCodelkup);
+        }
+    }
+
+    // Delete a codelkup by ID
+    public void deleteCodelkup(Integer codelkupId) {
+        if (codeLkupRepository.existsById(codelkupId)) {
+            Optional<CodeLkup> deletedCodelkup = codeLkupRepository.findById(codelkupId);
+            codeLkupRepository.deleteById(codelkupId);
+            throw new RuntimeException("Codelkup " + deletedCodelkup.get().getCode()+ " has been deleted");
+        } else {
+            throw new RuntimeException("Codelkup not found with ID: " + codelkupId);
         }
     }
 }
