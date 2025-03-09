@@ -23,4 +23,44 @@ public class CustomerPackage {
 
     private int remainingClasses;
     private LocalDateTime purchaseDate = LocalDateTime.now();
+
+    public UUID getCustomerPackageId() {
+        return customerPackageId;
+    }
+
+    public void setCustomerPackageId(UUID customerPackageId) {
+        this.customerPackageId = customerPackageId;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
+    public ClassPackage getClassPackage() {
+        return classPackage;
+    }
+
+    public void setClassPackage(ClassPackage classPackage) {
+        this.classPackage = classPackage;
+    }
+
+    public int getRemainingClasses() {
+        return remainingClasses;
+    }
+
+    public void setRemainingClasses(int remainingClasses) {
+        this.remainingClasses = remainingClasses;
+    }
+
+    public LocalDateTime getPurchaseDate() {
+        return purchaseDate;
+    }
+
+    public void setPurchaseDate(LocalDateTime purchaseDate) {
+        this.purchaseDate = purchaseDate;
+    }
 }
