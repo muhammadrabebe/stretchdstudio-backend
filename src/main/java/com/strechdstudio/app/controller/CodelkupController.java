@@ -1,6 +1,7 @@
 package com.strechdstudio.app.controller;
 
 import com.strechdstudio.app.dto.ApiResponse;
+import com.strechdstudio.app.dto.CodelkupDTO;
 import com.strechdstudio.app.model.CodeLkup;
 import com.strechdstudio.app.service.CodelistService;
 import com.strechdstudio.app.service.CodelkupService;
@@ -22,16 +23,21 @@ public class CodelkupController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<CodeLkup>>>getAllCodelkups(){
-        List<CodeLkup> codeLkupList = codelkupService.getAllCodelkup();
-        ApiResponse<List<CodeLkup>> response = new ApiResponse<>("success", 200, codeLkupList);
+    public ResponseEntity<ApiResponse<List<CodelkupDTO>>>getAllCodelkups(){
+        List<CodelkupDTO> codeLkupList = codelkupService.getAllCodeLookups();
+        ApiResponse<List<CodelkupDTO>> response = new ApiResponse<>("success", 200, codeLkupList);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{listname}")
-    public ResponseEntity<ApiResponse<List<CodeLkup>>>getCodelkupsByListname(@RequestParam("listname") String listname  ){
-        List<CodeLkup> codeLkupList = codelkupService.findCodelkupByListname(listname);
-        ApiResponse<List<CodeLkup>> response = new ApiResponse<>("success", 200, codeLkupList);
+    public ResponseEntity<ApiResponse<List<CodelkupDTO>>> getCodelkupsByListname(@PathVariable String listname) {
+        // Retrieve the CodelkupDTO list from the service
+        List<CodelkupDTO> codelkupDTOList = codelkupService.findCodelkupByListname(listname);
+
+        // Create the ApiResponse object
+        ApiResponse<List<CodelkupDTO>> response = new ApiResponse<>("success", 200, codelkupDTOList);
+
+        // Return the response with the CodelkupDTO list
         return ResponseEntity.ok(response);
     }
 
@@ -40,9 +46,10 @@ public class CodelkupController {
         return codelkupService.saveCodelkup(codeLkup);
     }
 
-    @PutMapping("/{codelkupId}")
-    public CodeLkup updateCodelkup(@PathVariable Integer codelkupId,  CodeLkup codeLkup){
-        return codelkupService.updateCodelkup(codeLkup);
+    @PutMapping("/update")
+    public ResponseEntity<CodelkupDTO> updateCodelkup(@RequestBody CodelkupDTO codeLkupDTO) {
+        CodeLkup updatedCodelkup = codelkupService.updateCodelkup(codeLkupDTO);
+        return ResponseEntity.ok(convertToDto(updatedCodelkup));
     }
 
     @DeleteMapping("{codelkupId}")
@@ -50,11 +57,17 @@ public class CodelkupController {
          codelkupService.deleteCodelkup(codelkupId);
     }
 
-//    @GetMapping("/user/{id}")
-//    public ResponseEntity<ApiResponse<User>> getUserById(@PathVariable Long id) {
-//        User user = new User(id, "John Doe", "john.doe@example.com");
-//        ApiResponse<User> response = new ApiResponse<>("User retrieved successfully", 200, user);
-//        return ResponseEntity.ok(response);
-//    }
+    private CodelkupDTO convertToDto(CodeLkup codeLkup) {
+        CodelkupDTO dto = new CodelkupDTO();
+        dto.setCodeLkupId(codeLkup.getCodeLkupId());
+        dto.setCode(codeLkup.getCode());
+        dto.setListname(codeLkup.getCodelist().getListName());
+        dto.setDescription(codeLkup.getDescription());
+        dto.setAddWho(codeLkup.getAddWho());
+        dto.setAddDate(codeLkup.getAddDate());
+        dto.setEditWho(codeLkup.getEditWho());
+        dto.setEditDate(codeLkup.getEditDate());
+        return dto;
+    }
 
 }

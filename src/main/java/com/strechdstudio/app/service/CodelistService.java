@@ -32,7 +32,7 @@ public class CodelistService {
     // Save a new codelist
     public Codelist saveCodelist(Codelist codelist) {
         // Check if the codelist exists
-        Optional<Codelist> existingCodelist = Optional.ofNullable(codelistRepository.findBylistName(codelist.getListName()));
+        Optional<Optional<Codelist>> existingCodelist = Optional.ofNullable(codelistRepository.findBylistName(codelist.getListName()));
         if (existingCodelist.isPresent()) {
             throw new RuntimeException("Codelist " + codelist.getListName() + " is already exist ");
         } else {

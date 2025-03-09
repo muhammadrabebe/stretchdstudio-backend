@@ -9,17 +9,23 @@ public class Booking {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "bookingid")
     private Integer bookingId;
 
-    @Column(name = "customerid", nullable = false)
-    private Integer customerId;
+    @ManyToOne
+    @JoinColumn(name = "customerId", nullable = false)
+    private Customer customer;
 
-    @Column(name = "classid", nullable = false)
-    private Integer classId;
+    @ManyToOne
+    @JoinColumn(name = "classId", nullable = false)
+    private Class bookedClass; // Renaming to avoid conflict with Java keyword
 
-    @Column(name = "bookingtime", nullable = false)
-    private LocalDateTime bookingTime;
+    @ManyToOne
+    @JoinColumn(name = "statusId", nullable = false)
+    private CodeLkup status;
+
+    @ManyToOne
+    @JoinColumn(name = "instructorId", nullable = false)
+    private Instructor instructor; // Linking instructor
 
     @Column(name = "addwho")
     private String addWho;
@@ -33,9 +39,6 @@ public class Booking {
     @Column(name = "editdate")
     private LocalDateTime editDate;
 
-    @Column(name = "statusid")
-    private Integer statusId;
-
     public Integer getBookingId() {
         return bookingId;
     }
@@ -44,28 +47,36 @@ public class Booking {
         this.bookingId = bookingId;
     }
 
-    public Integer getCustomerId() {
-        return customerId;
+    public Customer getCustomer() {
+        return customer;
     }
 
-    public void setCustomerId(Integer customerId) {
-        this.customerId = customerId;
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
 
-    public Integer getClassId() {
-        return classId;
+    public Class getBookedClass() {
+        return bookedClass;
     }
 
-    public void setClassId(Integer classId) {
-        this.classId = classId;
+    public void setBookedClass(Class bookedClass) {
+        this.bookedClass = bookedClass;
     }
 
-    public LocalDateTime getBookingTime() {
-        return bookingTime;
+    public CodeLkup getStatus() {
+        return status;
     }
 
-    public void setBookingTime(LocalDateTime bookingTime) {
-        this.bookingTime = bookingTime;
+    public void setStatus(CodeLkup status) {
+        this.status = status;
+    }
+
+    public Instructor getInstructor() {
+        return instructor;
+    }
+
+    public void setInstructor(Instructor instructor) {
+        this.instructor = instructor;
     }
 
     public String getAddWho() {
@@ -98,13 +109,5 @@ public class Booking {
 
     public void setEditDate(LocalDateTime editDate) {
         this.editDate = editDate;
-    }
-
-    public Integer getStatusId() {
-        return statusId;
-    }
-
-    public void setStatusId(Integer statusId) {
-        this.statusId = statusId;
     }
 }

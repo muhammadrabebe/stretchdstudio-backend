@@ -41,11 +41,11 @@ public class Instructor {
     private LocalDateTime editDate;
 
     @ManyToOne
-    @JoinColumn(name = "statusid", referencedColumnName = "codelkupid")
+    @JoinColumn(name = "statusId", referencedColumnName = "codelkupid")
     private CodeLkup status; // Assuming status is stored in codelkup
 
     @ManyToOne
-    @JoinColumn(name = "specializationid", referencedColumnName = "codelkupid")
+    @JoinColumn(name = "specializationId", referencedColumnName = "codelkupid")
     private CodeLkup specialization; // Assuming specialization is stored in codelkup
 
     public String getPhoneNumber() {

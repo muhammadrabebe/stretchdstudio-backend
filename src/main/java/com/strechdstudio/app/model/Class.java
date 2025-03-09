@@ -51,6 +51,19 @@ public class Class {
     @Column(name = "city")
     private String city;
 
+    @Column(name = "description")
+    private String description;
+
+    @Column(name = "minAge")
+    private Integer minAge;
+
+    @Column(name = "maxAge")
+    private Integer maxAge;
+
+    @ManyToOne
+    @JoinColumn(name = "type", referencedColumnName = "type", nullable = false)
+    private ClassType classType;
+
     @Column(name = "addwho")
     private String addWho;
 
@@ -198,5 +211,37 @@ public class Class {
 
     public void setStatus(CodeLkup status) {
         this.status = status;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Integer getMinAge() {
+        return minAge;
+    }
+
+    public void setMinAge(Integer minAge) {
+        this.minAge = minAge;
+    }
+
+    public Integer getMaxAge() {
+        return maxAge;
+    }
+
+    public void setMaxAge(Integer maxAge) {
+        this.maxAge = maxAge;
+    }
+
+    public ClassType getClassType() {
+        return classType;
+    }
+
+    public void setClassType(ClassType classType) {
+        this.classType = classType;
     }
 }

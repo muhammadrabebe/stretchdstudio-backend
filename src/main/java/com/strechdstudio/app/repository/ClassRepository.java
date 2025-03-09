@@ -8,7 +8,9 @@ import java.util.List;
 
 @Repository
 public interface ClassRepository extends JpaRepository<Class, Integer> {
-    List<Class> findByInstructorInstructorId(Integer insturctorId);
+    List<Class> findByInstructor_InstructorId(Integer insturctorId);
 
     Class findByClassName(String className);
+
+    List<Class> findByClassType_Type(String type);
 }

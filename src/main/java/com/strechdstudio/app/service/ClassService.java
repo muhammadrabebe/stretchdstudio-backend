@@ -2,19 +2,20 @@ package com.strechdstudio.app.service;
 
 import com.strechdstudio.app.dto.ClassDTO;
 import com.strechdstudio.app.dto.InstructorDTO;
+import com.strechdstudio.app.model.*;
 import com.strechdstudio.app.model.Class;
-import com.strechdstudio.app.model.CodeLkup;
-import com.strechdstudio.app.model.Customer;
-import com.strechdstudio.app.model.Instructor;
 import com.strechdstudio.app.repository.ClassRepository;
+import com.strechdstudio.app.repository.ClassTypeRepository;
 import com.strechdstudio.app.repository.CodeLkupRepository;
 import com.strechdstudio.app.repository.InstructorRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ClassService {
@@ -28,15 +29,25 @@ public class ClassService {
     @Autowired
     public CodeLkupRepository codeLkupRepository;
 
-    // Get all classes
-    public List<Class> getAllClasses() {
-        List<Class> Classes = classRepository.findAll();
-        return Classes;
+    @Autowired
+    public ClassTypeRepository classTypeRepository;
+
+    public List<ClassDTO> getAllClasses() {
+        return classRepository.findAll()  // Fetch all classes
+                .stream()
+                .map(ClassDTO::new)  // Convert each Class to ClassDTO
+                .collect(Collectors.toList()); // Collect as a List
     }
 
     // Get class by ID
-    public Optional<Class> getClassById(Integer classId) {
-        return classRepository.findById(classId);
+    public ClassDTO getClassById(Integer classId) {
+        if (classId == null || classId <= 0) {
+            throw new IllegalArgumentException("Invalid class ID");
+        }
+
+        return classRepository.findById(classId)
+                .map(ClassDTO::new)
+                .orElseThrow(() -> new EntityNotFoundException("Class with ID " + classId + " not found"));
     }
 
     // Save a new class
@@ -61,6 +72,9 @@ public class ClassService {
         CodeLkup status = codeLkupRepository.findById(classDTO.getStatusId())
                 .orElseThrow(() -> new RuntimeException("Status not found for ID: " + classDTO.getStatusId()));
 
+        ClassType classType = classTypeRepository.findById(classDTO.getTypeId())
+                .orElseThrow(() -> new RuntimeException("Type not found for ID: " + classDTO.getTypeId()));
+
         // Map DTO properties to class entity
         currentClass.setClassName(classDTO.getClassName());
         currentClass.setStartTime(classDTO.getStartTime());
@@ -74,31 +88,115 @@ public class ClassService {
         currentClass.setBranch(branch); // Set the fetched branch entity
         currentClass.setStatus(status); // Set the fetched status entity
         currentClass.setInstructor(instructor); // Set the fetched instructor entity
+        currentClass.setDescription(classDTO.getDescription());
+        currentClass.setMinAge(classDTO.getMinAge());
+        currentClass.setMaxAge(classDTO.getMaxAge());
+        currentClass.setClassType(classType);
         currentClass.setAddWho(classDTO.getAddWho());
         currentClass.setAddDate(currentDate);
-        currentClass.setEditWho(classDTO.getEditWho());
+        currentClass.setEditWho(classDTO.getAddWho());
         currentClass.setEditDate(currentDate);
 
         // Save and return the class
         return classRepository.save(currentClass);
     }
 
-
     // Update an existing class
-    public Class updateClass(Integer classId, Class updatedClass) {
-        if (classRepository.existsById(classId)) {
-            return classRepository.save(updatedClass);
-        } else {
-            throw new RuntimeException("Class not found with ID: " + classId);
+    public ClassDTO updateClass(Integer classId, ClassDTO classDTO) {
+        if (classId == null || classId <= 0) {
+            throw new IllegalArgumentException("Invalid class ID");
         }
+
+        Class classEntity = classRepository.findById(classId)
+                .orElseThrow(() -> new EntityNotFoundException("Class with ID " + classId + " not found"));
+
+        LocalDateTime currentDate = LocalDateTime.now();
+
+        // Update fields
+        classEntity.setClassName(classDTO.getClassName());
+        classEntity.setStartTime(classDTO.getStartTime());
+        classEntity.setEndTime(classDTO.getEndTime());
+        classEntity.setMaxCapacity(classDTO.getMaxCapacity());
+        classEntity.setLocation(classDTO.getLocation());
+        classEntity.setAddressOne(classDTO.getAddressOne());
+        classEntity.setAddressTwo(classDTO.getAddressTwo());
+        classEntity.setAddressThree(classDTO.getAddressThree());
+        classEntity.setCity(classDTO.getCity());
+        classEntity.setDescription(classDTO.getDescription());
+        classEntity.setMinAge(classDTO.getMinAge());
+        classEntity.setMaxAge(classDTO.getMaxAge());
+        classEntity.setEditWho(classDTO.getEditWho());
+        classEntity.setEditDate(currentDate);
+
+        // Update related entities (instructor, branch, status)
+        if (classDTO.getInstructorId() != null) {
+            Instructor instructor = instructorRepository.findById(classDTO.getInstructorId())
+                    .orElseThrow(() -> new EntityNotFoundException("Instructor not found"));
+            classEntity.setInstructor(instructor);
+        }
+
+        if (classDTO.getBranchId() != null) {
+            CodeLkup branch = codeLkupRepository.findById(classDTO.getBranchId())
+                    .orElseThrow(() -> new EntityNotFoundException("Branch not found"));
+            classEntity.setBranch(branch);
+        }
+
+        if (classDTO.getStatusId() != null) {
+            CodeLkup status = codeLkupRepository.findById(classDTO.getStatusId())
+                    .orElseThrow(() -> new EntityNotFoundException("Status not found"));
+            classEntity.setStatus(status);
+        }
+        if (classDTO.getTypeId() != null) {
+            ClassType classType = classTypeRepository.findById(classDTO.getTypeId())
+                    .orElseThrow(() -> new RuntimeException("Type not found for ID: " + classDTO.getTypeId()));
+            classEntity.setClassType(classType);
+        }
+
+        Class updatedEntity = classRepository.save(classEntity);
+        return new ClassDTO(updatedEntity);
     }
 
     // Delete a class by ID
     public void deleteClass(Integer classId) {
-        if (classRepository.existsById(classId)) {
-            classRepository.deleteById(classId);
-        } else {
-            throw new RuntimeException("Class not found with ID: " + classId);
+        if (classId == null || classId <= 0) {
+            throw new IllegalArgumentException("Invalid class ID");
         }
+
+        Class classEntity = classRepository.findById(classId)
+                .orElseThrow(() -> new EntityNotFoundException("Class with ID " + classId + " not found"));
+
+        classRepository.delete(classEntity);
     }
+
+    // get all classes by instructor
+    public List<ClassDTO> getClassesByInstructorId(Integer instructorId) {
+        if (instructorId == null || instructorId <= 0) {
+            throw new IllegalArgumentException("Invalid instructor ID");
+        }
+
+        List<Class> classes = classRepository.findByInstructor_InstructorId(instructorId);
+
+        if (classes.isEmpty()) {
+            throw new EntityNotFoundException("No classes found for instructor ID " + instructorId);
+        }
+
+        return classes.stream().map(ClassDTO::new).collect(Collectors.toList());
+    }
+
+    // get all classes by type
+    public List<ClassDTO> getClassesByType(String type) {
+        if (type == null || type.trim().isEmpty()) {
+            throw new IllegalArgumentException("Class type cannot be null or empty");
+        }
+
+        List<Class> classes = classRepository.findByClassType_Type(type);
+
+        if (classes.isEmpty()) {
+            throw new EntityNotFoundException("No classes found for type: " + type);
+        }
+
+        return classes.stream().map(ClassDTO::new).collect(Collectors.toList());
+    }
+
+
 }

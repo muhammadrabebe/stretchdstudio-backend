@@ -1,41 +1,34 @@
-package com.strechdstudio.app.model;
+package com.strechdstudio.app.dto;
 
+import com.strechdstudio.app.model.Codelist;
 import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
 
-@Entity
-@Table(
-        name = "codelkup",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"listname", "code"})
-)
-public class CodeLkup {
+public class CodelkupDTO {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "codelkupid")
     private Integer codeLkupId;
-
-    @Column(name = "code")
     private String code;
-
-    @Column(name = "description")
     private String description;
-
-    @ManyToOne
-    @JoinColumn(name = "listname", referencedColumnName = "listname")
-    private Codelist codelist;
-
-    @Column(name = "addwho")
+    private String listname;
     private String addWho;
-
-    @Column(name = "adddate")
     private LocalDateTime addDate;
-
-    @Column(name = "editwho")
     private String editWho;
-
-    @Column(name = "editdate")
     private LocalDateTime editDate;
+
+    public CodelkupDTO() {
+    }
+
+    public CodelkupDTO(Integer codeLkupId, String code, String description, String listname, String addWho, LocalDateTime addDate, String editWho, LocalDateTime editDate) {
+        this.codeLkupId = codeLkupId;
+        this.code = code;
+        this.description = description;
+        this.listname = listname;
+        this.addWho = addWho;
+        this.addDate = addDate;
+        this.editWho = editWho;
+        this.editDate = editDate;
+    }
 
     public Integer getCodeLkupId() {
         return codeLkupId;
@@ -61,13 +54,13 @@ public class CodeLkup {
         this.description = description;
     }
 
-//    public Codelist getCodelist() {
-//        return codelist;
-//    }
-//
-//    public void setCodelist(Codelist codelist) {
-//        this.codelist = codelist;
-//    }
+    public String getListname() {
+        return listname;
+    }
+
+    public void setListname(String listname) {
+        this.listname = listname;
+    }
 
     public String getAddWho() {
         return addWho;
@@ -99,13 +92,5 @@ public class CodeLkup {
 
     public void setEditDate(LocalDateTime editDate) {
         this.editDate = editDate;
-    }
-
-    public Codelist getCodelist() {
-        return codelist;
-    }
-
-    public void setCodelist(Codelist codelist) {
-        this.codelist = codelist;
     }
 }
