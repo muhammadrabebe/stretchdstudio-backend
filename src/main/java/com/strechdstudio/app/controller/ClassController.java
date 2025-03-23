@@ -9,6 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 
@@ -30,6 +33,31 @@ public class ClassController {
         ApiResponse<List<ClassDTO>> response = new ApiResponse<>("success", 200, classList);
         return ResponseEntity.ok(response);
     }
+
+    //  find classes by date
+    @GetMapping("/bydate/{date}")
+    public ResponseEntity<ApiResponse<List<ClassDTO>>> getClassesByDate(@PathVariable String date) {
+        LocalDate localDate = LocalDate.parse(date);
+        LocalDateTime startOfDay = localDate.atStartOfDay();
+        LocalDateTime endOfDay = localDate.atTime(LocalTime.MAX);
+
+        List<ClassDTO> classList = classService.getClassesByDate(startOfDay,endOfDay);
+        ApiResponse<List<ClassDTO>> response = new ApiResponse<>("success", 200, classList);
+        return ResponseEntity.ok(response);
+    }
+
+    // find classes by date and type
+    @GetMapping("/bydate/{date}/bytype/{type}")
+    public ResponseEntity<ApiResponse<List<ClassDTO>>> getClassesByType(@PathVariable String date ,@PathVariable String type) {
+        LocalDate localDate = LocalDate.parse(date);
+        LocalDateTime startOfDay = localDate.atStartOfDay();
+        LocalDateTime endOfDay = localDate.atTime(LocalTime.MAX);
+
+        List<ClassDTO> classList = classService.getClassesByDateAndByType(startOfDay,endOfDay , type);
+        ApiResponse<List<ClassDTO>> response = new ApiResponse<>("success", 200, classList);
+        return ResponseEntity.ok(response);
+    }
+
     // Get class by ID
     @GetMapping("/{classId}")
     public ResponseEntity<ApiResponse<ClassDTO>> getClassById(@PathVariable Integer classId) {
@@ -79,12 +107,6 @@ public class ClassController {
         return ResponseEntity.ok(response);
     }
 
-    // find classes by type
-    @GetMapping("/type/{type}")
-    public ResponseEntity<ApiResponse<List<ClassDTO>>> getClassesByType(@PathVariable String type) {
-        List<ClassDTO> classList = classService.getClassesByType(type);
-        ApiResponse<List<ClassDTO>> response = new ApiResponse<>("success", 200, classList);
-        return ResponseEntity.ok(response);
-    }
+
 
 }

@@ -1,35 +1,56 @@
 package com.strechdstudio.app.model;
 
-import jakarta.persistence.Entity;
+
 import jakarta.persistence.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.List;
+import java.util.UUID;
 
 @Entity
-public class User {
+@Table(name = "users")
+public class User implements UserDetails {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private UUID id;  // UUID as the primary key
 
-    private String username;  // Unique username or email for login
-    private String password;  // Hashed password
+    @Column(unique = true, nullable = false)
+    private String username;
 
-    @Enumerated(EnumType.STRING)
-    private Role role;  // User's role (ADMIN, CUSTOMER, INSTRUCTOR)
+    @Column(unique = true, nullable = false)
+    private String email;  // Email field
 
-    private LocalDateTime lastLoginDate;
-    private LocalDateTime logoutDate;
+    @Column(unique = true, nullable = false)
+    private String phoneNumber;  // Phone number field
 
-    @OneToOne
-    @JoinColumn(name = "customerId", nullable = true)  // Link to customer table if it's a customer user
-    private Customer customer;
+    @Column(nullable = false)
+    private String password;  // Password field
 
-    public Long getId() {
+    @Column(nullable = false)
+    private boolean isActive;  // Active flag
+
+    @Column(name = "lastLogin")
+    private LocalDateTime lastLogin;  // Timestamp of last login
+
+    @Column(name = "lastLogout")
+    private LocalDateTime lastLogout;  // Timestamp of last logout
+
+    @Column(name = "addDate", nullable = false, updatable = false)
+    private LocalDateTime addDate;  // Timestamp of account creation
+
+    @Column(name = "editDate")
+    private LocalDateTime editDate;  // Timestamp of last update
+
+    // Getters and Setters
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
@@ -37,8 +58,49 @@ public class User {
         return username;
     }
 
+    @Override
+    public boolean isAccountNonExpired() {
+        return UserDetails.super.isAccountNonExpired();
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return UserDetails.super.isAccountNonLocked();
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return UserDetails.super.isCredentialsNonExpired();
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return UserDetails.super.isEnabled();
+    }
+
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of();
     }
 
     public String getPassword() {
@@ -49,36 +111,45 @@ public class User {
         this.password = password;
     }
 
-    public Role getRole() {
-        return role;
+    public boolean isActive() {
+        return isActive;
     }
 
-    public void setRole(Role role) {
-        this.role = role;
+    public void setActive(boolean active) {
+        isActive = active;
     }
 
-    public LocalDateTime getLastLoginDate() {
-        return lastLoginDate;
+    public LocalDateTime getLastLogin() {
+        return lastLogin;
     }
 
-    public void setLastLoginDate(LocalDateTime lastLoginDate) {
-        this.lastLoginDate = lastLoginDate;
+    public void setLastLogin(LocalDateTime lastLogin) {
+        this.lastLogin = lastLogin;
     }
 
-    public LocalDateTime getLogoutDate() {
-        return logoutDate;
+    public LocalDateTime getLastLogout() {
+        return lastLogout;
     }
 
-    public void setLogoutDate(LocalDateTime logoutDate) {
-        this.logoutDate = logoutDate;
+    public void setLastLogout(LocalDateTime lastLogout) {
+        this.lastLogout = lastLogout;
     }
 
-    public Customer getCustomer() {
-        return customer;
+    public LocalDateTime getAddDate() {
+        return addDate;
     }
 
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
+    public void setAddDate(LocalDateTime addDate) {
+        this.addDate = addDate;
+    }
+
+    public LocalDateTime getEditDate() {
+        return editDate;
+    }
+
+    public void setEditDate(LocalDateTime editDate) {
+        this.editDate = editDate;
     }
 }
+
 

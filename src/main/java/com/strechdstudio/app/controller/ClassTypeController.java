@@ -1,6 +1,8 @@
 package com.strechdstudio.app.controller;
 
 import com.strechdstudio.app.dto.ApiResponse;
+import com.strechdstudio.app.dto.ClassPackageDTO;
+import com.strechdstudio.app.dto.ClassTypeDTO;
 import com.strechdstudio.app.model.ClassType;
 import com.strechdstudio.app.service.ClassTypeService;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +28,12 @@ public class ClassTypeController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse<ClassTypeDTO>> getClassTypeById(@PathVariable UUID id) {
+        ClassTypeDTO classTypeDTO = service.getClassTypeById(id);
+        return ResponseEntity.ok(new ApiResponse<>("Class type retrieved successfully", 200, classTypeDTO));
+    }
+
     @PostMapping
     public ResponseEntity<ApiResponse<ClassType>> createClassType(@RequestBody ClassType classType) {
         ClassType savedClassType = service.createClassType(classType);
@@ -47,11 +55,11 @@ public class ClassTypeController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/active/count")
-    public ResponseEntity<ApiResponse<Integer>> getActiveInstructorCount() {
-        Integer count = service.getActiveClassTypeCount();
-        ApiResponse<Integer> response = new ApiResponse<>("success", 200, count);
-        return ResponseEntity.ok(response);
-    }
+//    @GetMapping("/active/count")
+//    public ResponseEntity<ApiResponse<Integer>> getActiveInstructorCount() {
+//        Integer count = service.getActiveClassTypeCount();
+//        ApiResponse<Integer> response = new ApiResponse<>("success", 200, count);
+//        return ResponseEntity.ok(response);
+//    }
 
 }

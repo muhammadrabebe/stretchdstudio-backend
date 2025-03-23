@@ -40,6 +40,24 @@ public class BookingDTO {
         this.editDate = booking.getEditDate();
     }
 
+
+//    public BookingDTO(Integer bookingId, Integer customerId, Integer classId, Integer statusId, Integer instructorId, String className, String instructorName, String customerName, String status, LocalDateTime startTime, String addWho, LocalDateTime addDate, String editWho, LocalDateTime editDate) {
+//        this.bookingId = bookingId;
+//        this.customerId = customerId;
+//        this.classId = classId;
+//        this.statusId = statusId;
+//        this.instructorId = instructorId;
+//        this.className = className;
+//        this.instructorName = instructorName;
+//        this.customerName = customerName;
+//        this.status = status;
+//        this.startTime = startTime;
+//        this.addWho = addWho;
+//        this.addDate = addDate;
+//        this.editWho = editWho;
+//        this.editDate = editDate;
+//    }
+
     public Integer getBookingId() {
         return bookingId;
     }
@@ -151,4 +169,5 @@ public class BookingDTO {
     public void setStartTime(LocalDateTime startTime) {
         this.startTime = startTime;
     }
+
 }

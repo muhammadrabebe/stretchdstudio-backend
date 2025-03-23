@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/customerPackages")
+    @RequestMapping("/customerPackages")
 public class CustomerPackageController {
     @Autowired
     private CustomerPackageService customerPackageService;
@@ -24,13 +24,38 @@ public class CustomerPackageController {
         return ResponseEntity.ok(new ApiResponse<>("Customer packages retrieved successfully", 200, customerPackages));
     }
 
-    @PostMapping("/purchase/{customerId}/{classPackageId}")
-    public ResponseEntity<ApiResponse<CustomerPackage>> purchaseClassPackage(
-            @PathVariable Integer customerId, @PathVariable UUID classPackageId) {
-        CustomerPackage purchasedPackage = customerPackageService.purchaseClassPackage(customerId, classPackageId);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new ApiResponse<>("Class package purchased successfully", 201, purchasedPackage));
+    @GetMapping("/customer/{customerId}")
+    public ResponseEntity<ApiResponse<List<CustomerPackageDTO>>> getCustomerPackagesByCustomer(@PathVariable Integer customerId) {
+        List<CustomerPackageDTO> customerPackages = customerPackageService.getCustomerPackagesByCustomer(customerId);
+        return ResponseEntity.ok(new ApiResponse<>("Customer packages retrieved successfully", 200, customerPackages));
     }
+
+        @GetMapping("/customer/{customerId}/latest-valid-package")
+    public ResponseEntity<ApiResponse<CustomerPackageDTO>> getNewestValidCustomerPackage(@PathVariable Integer customerId) {
+        CustomerPackageDTO customerPackage = customerPackageService.getNewestValidCustomerPackage(customerId);
+        return ResponseEntity.ok(new ApiResponse<>("Latest valid customer package retrieved successfully", 200, customerPackage));
+    }
+
+
+//    @PostMapping("/purchase/{customerId}/{classPackageId}")
+//    public ResponseEntity<ApiResponse<CustomerPackage>> purchaseClassPackage(
+//            @PathVariable Integer customerId, @PathVariable UUID classPackageId) {
+//        CustomerPackage purchasedPackage = customerPackageService.purchaseClassPackage(customerId, classPackageId);
+//        return ResponseEntity.status(HttpStatus.CREATED)
+//                .body(new ApiResponse<>("Class package purchased successfully", 201, purchasedPackage));
+//    }
+
+    @PostMapping("/purchase/{customerId}/{packageId}")
+    public ResponseEntity<ApiResponse<String>> purchasePackage(@PathVariable Integer customerId, @PathVariable UUID packageId) {
+        try {
+            customerPackageService.purchaseClassPackage(customerId, packageId);
+            return ResponseEntity.ok(new ApiResponse<>("Package purchased successfully", 200, null));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponse<>(e.getMessage(), 400, null));
+        }
+    }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> deleteCustomerPackage(@PathVariable UUID id) {

@@ -8,7 +8,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface ClassTypeRepository extends JpaRepository<ClassType, UUID> {
-    Optional<ClassType> findByType(String type);
+    ClassType findByType(String type);
     @Query("SELECT COUNT(CT) FROM ClassType CT")
     Integer countAllClassTypes();
 }

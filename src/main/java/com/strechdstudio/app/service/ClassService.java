@@ -39,6 +39,22 @@ public class ClassService {
                 .collect(Collectors.toList()); // Collect as a List
     }
 
+    public List<ClassDTO> getClassesByDate(LocalDateTime startOfDay, LocalDateTime endOfDay) {
+        return classRepository.findByStartTimeBetweenOrderByStartTimeAsc(startOfDay,endOfDay)  // Fetch all classes
+                .stream()
+                .map(ClassDTO::new)  // Convert each Class to ClassDTO
+                .collect(Collectors.toList()); // Collect as a List
+    }
+
+    public List<ClassDTO> getClassesByDateAndByType(LocalDateTime startOfDay, LocalDateTime endOfDay, String type) {
+        ClassType classType = classTypeRepository.findByType(type);
+
+        return classRepository.findByStartTimeBetweenAndClassTypeOrderByStartTimeAsc(startOfDay,endOfDay,classType)  // Fetch all classes
+                .stream()
+                .map(ClassDTO::new)  // Convert each Class to ClassDTO
+                .collect(Collectors.toList()); // Collect as a List
+    }
+
     // Get class by ID
     public ClassDTO getClassById(Integer classId) {
         if (classId == null || classId <= 0) {

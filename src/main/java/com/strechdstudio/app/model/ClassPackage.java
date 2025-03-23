@@ -21,7 +21,7 @@ public class ClassPackage {
     private int totalClasses;
 
     @ManyToOne
-    @JoinColumn(name = "typeId", nullable = false)
+    @JoinColumn(name = "classtypeid", nullable = false)
     private ClassType classType;
 
     private LocalDateTime startDate;

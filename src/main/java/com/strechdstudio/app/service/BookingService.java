@@ -2,6 +2,7 @@ package com.strechdstudio.app.service;
 
 import com.strechdstudio.app.dto.BookingDTO;
 import com.strechdstudio.app.dto.ClassDTO;
+import com.strechdstudio.app.dto.ClassPackageDTO;
 import com.strechdstudio.app.model.Booking;
 import com.strechdstudio.app.model.Class;
 import com.strechdstudio.app.model.CodeLkup;
@@ -14,7 +15,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -39,16 +42,43 @@ public class BookingService {
 
     // get all bookings
     public List<BookingDTO> getAllBookings() {
-        return bookingRepository.findAll()  // Fetch all bookings
+        return bookingRepository.findAll()
                 .stream()
-                .map(BookingDTO::new)  // Convert each Booking to BookingDTO
-                .collect(Collectors.toList()); // Collect as a List
+                .map(BookingDTO::new)
+                .collect(Collectors.toList());
     }
 
-    // Get booking by ID
-    public Optional<Booking> getBookingById(Integer bookingId) {
-        return bookingRepository.findById(bookingId);
+    // get all upcoming bookings
+    public List<ClassDTO> getUpcomingBookings(Integer customerId) {
+        return bookingRepository.findUpcomingBookedClassesByCustomer(customerId,LocalDateTime.now())
+                .stream()
+                .map(ClassDTO::new)
+                .collect(Collectors.toList());
     }
+
+    // get all past bookings
+    public List<ClassDTO> getPastBookings(Integer customerId) {
+        return bookingRepository.findPastBookedClassesByCustomer(customerId,LocalDateTime.now())
+                .stream()
+                .map(ClassDTO::new)
+                .collect(Collectors.toList());
+    }
+
+    // get all upcoming bookings
+    public List<ClassDTO> getNextUpcomingBookedClass(Integer customerId) {
+        return bookingRepository.findTopBookedClassesByCustomer(customerId,LocalDateTime.now())
+                .stream()
+                .map(ClassDTO::new)
+                .collect(Collectors.toList());
+    }
+
+    public BookingDTO getBookingById(Integer bookingId) {
+        return bookingRepository.findById(bookingId)
+                .map(BookingDTO::new)
+                .orElseThrow(() -> new NoSuchElementException("Booking not found"));
+    }
+
+
 
     public BookingDTO createBooking(BookingDTO bookingDTO) {
         // Convert DTO to entity

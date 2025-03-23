@@ -51,10 +51,31 @@ public class BookingController {
 
     // Get booking by ID
     @GetMapping("/{bookingId}")
-    public ResponseEntity<ApiResponse<Optional<Booking>>>getBookingById(@PathVariable Integer bookingId) {
-        Optional<Booking> bookedClass = bookingService.getBookingById(bookingId);
-        ApiResponse<Optional<Booking>> response = new ApiResponse<>("success", 200, bookedClass);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    public ResponseEntity<ApiResponse<BookingDTO>> getBookingById(@PathVariable Integer bookingId) {
+        BookingDTO bookingDTO = bookingService.getBookingById(bookingId);
+        ApiResponse<BookingDTO> response = new ApiResponse<>("success", 200, bookingDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @GetMapping("/upcomingClasses/bycustomer/{customerId}")
+    public ResponseEntity<ApiResponse<List<ClassDTO>>> getUpcomingBookings(@PathVariable Integer customerId) {
+        List<ClassDTO> bookingList = bookingService.getUpcomingBookings(customerId);
+        ApiResponse<List<ClassDTO>> response = new ApiResponse<>("success", 200, bookingList);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/pastClasses/bycustomer/{customerId}")
+    public ResponseEntity<ApiResponse<List<ClassDTO>>> getPastBookings(@PathVariable Integer customerId) {
+        List<ClassDTO> bookingList = bookingService.getPastBookings(customerId);
+        ApiResponse<List<ClassDTO>> response = new ApiResponse<>("success", 200, bookingList);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/top/bookedclass/bycustomer/{customerId}")
+    public ResponseEntity<ApiResponse<List<ClassDTO>>> getNextUpcomingBookedClass(@PathVariable Integer customerId) {
+        List<ClassDTO> bookingList = bookingService.getNextUpcomingBookedClass(customerId);
+        ApiResponse<List<ClassDTO>> response = new ApiResponse<>("success", 200, bookingList);
+        return ResponseEntity.ok(response);
     }
 
     // create a booking

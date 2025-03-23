@@ -25,21 +25,21 @@ public class ClassPackageController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<ClassPackage>> getClassPackageById(@PathVariable UUID id) {
-        ClassPackage classPackage = classPackageService.getClassPackageById(id);
+    public ResponseEntity<ApiResponse<ClassPackageDTO>> getClassPackageById(@PathVariable UUID id) {
+        ClassPackageDTO classPackage = classPackageService.getClassPackageById(id);
         return ResponseEntity.ok(new ApiResponse<>("Class package retrieved successfully", 200, classPackage));
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<ClassPackage>> createClassPackage(@RequestBody ClassPackage classPackage) {
-        ClassPackage createdPackage = classPackageService.createClassPackage(classPackage);
+    public ResponseEntity<ApiResponse<ClassPackage>> createClassPackage(@RequestBody ClassPackageDTO classPackageDTO) {
+        ClassPackage createdPackage = classPackageService.createClassPackage(classPackageDTO);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new ApiResponse<>("Class package created successfully", 201, createdPackage));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<ClassPackage>> updateClassPackage(
-            @PathVariable UUID id, @RequestBody ClassPackage classPackage) {
+            @PathVariable UUID id, @RequestBody ClassPackageDTO classPackage) {
         ClassPackage updatedPackage = classPackageService.updateClassPackage(id, classPackage);
         return ResponseEntity.ok(new ApiResponse<>("Class package updated successfully", 200, updatedPackage));
     }
