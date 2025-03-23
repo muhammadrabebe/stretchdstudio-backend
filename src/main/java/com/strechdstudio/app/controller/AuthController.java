@@ -45,9 +45,9 @@ public class AuthController {
 
     // Logout Endpoint
     @PostMapping("/logout")
-    public ResponseEntity<ApiResponse<String>> logout(@RequestParam UUID userId) {
+    public ResponseEntity<ApiResponse<String>> logout(@RequestParam String username) {
         try {
-            authService.logout(userId);
+            authService.logout(username);
             ApiResponse<String> response = new ApiResponse<>("Logout successful", 200, null);
             return ResponseEntity.ok(response);
         } catch (Exception e) {

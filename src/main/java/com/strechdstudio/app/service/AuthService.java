@@ -39,9 +39,18 @@ public class AuthService {
 
     // Authenticate and generate JWT Token
     public String authenticateAndGenerateToken(LoginRequest loginRequest) throws Exception {
+        // Try to find the user by username or email
         User user = userRepository.findByUsername(loginRequest.getUsername())
-                .orElseThrow(() -> new Exception("User not found"));
+                .orElseGet(() -> {
+                    try {
+                        return userRepository.findByEmail(loginRequest.getEmail())
+                                .orElseThrow(() -> new Exception("User not found"));
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                });
 
+        // Check if the password matches
         if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
             throw new Exception("Invalid credentials");
         }
@@ -50,12 +59,14 @@ public class AuthService {
         user.setLastLogin(LocalDateTime.now());
         userRepository.save(user);
 
+        // Generate JWT token
         return generateJwtToken(user);
     }
 
+
     // Handle logout
-    public void logout(UUID userId) throws Exception {
-        User user = userRepository.findById(userId)
+    public void logout(String username) throws Exception {
+        User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new Exception("User not found"));
 
         // Update last logout timestamp

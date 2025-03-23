@@ -3,15 +3,24 @@ package com.strechdstudio.app.dto;
 public class LoginRequest {
 
     private String username;
+    private String email;
     private String password;
 
     // Default constructor
     public LoginRequest() {}
 
     // Constructor
-    public LoginRequest(String username, String password) {
+    public LoginRequest(String username, String password , String email) {
         this.username = username;
         this.password = password;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     // Getters and setters

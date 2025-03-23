@@ -27,7 +27,7 @@ public class SecurityConfig {
         http.csrf().disable() // Disable CSRF for stateless authentication with JWT
                 .authorizeHttpRequests()
                 .requestMatchers("/api/v1/auth/register", "/api/v1/auth/login").permitAll() // Allow access to register and login
-                .anyRequest().permitAll() // Allow all other requests without authentication
+                .anyRequest().authenticated() // Require authentication for all other requests
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Stateless authentication (no session)
@@ -47,7 +47,3 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 }
-
-
-
-
