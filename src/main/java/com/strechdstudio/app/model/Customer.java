@@ -2,6 +2,7 @@ package com.strechdstudio.app.model;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -28,14 +29,20 @@ public class Customer {
     private LocalDateTime lastLoginDate;
     private Integer totalClassesAttended;
 
-//    @ManyToOne
-//    @JoinColumn(name = "currentPackageId", referencedColumnName = "customerPackageId")
-//    private CustomerPackage currentPackage;
 
     private String preferredContactMethod;
     private String city;
     private String state;
     private String country;
+
+    // the below has been added on 28-03-2025 -- START
+    @OneToOne
+    @JoinColumn(name = "userId", nullable = true, unique = true)
+    private User user;
+
+    @Column(name = "dateOfBirth")
+    private LocalDate dateOfBirth;
+    // the below has been added on 28-03-2025 -- END
 
     private String addWho;
     private LocalDateTime addDate;
@@ -122,13 +129,21 @@ public class Customer {
         this.totalClassesAttended = totalClassesAttended;
     }
 
-//    public CustomerPackage getCurrentPackage() {
-//        return currentPackage;
-//    }
+    public User getUser() {
+        return user;
+    }
 
-//    public void setCurrentPackage(CustomerPackage currentPackage) {
-//        this.currentPackage = currentPackage;
-//    }
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public LocalDate getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public void setDateOfBirth(LocalDate dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
 
     public String getPreferredContactMethod() {
         return preferredContactMethod;

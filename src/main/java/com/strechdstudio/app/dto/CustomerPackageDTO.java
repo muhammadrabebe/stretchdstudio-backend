@@ -11,6 +11,7 @@ public class CustomerPackageDTO {
     private String customerName;
     private String classPackageName;
     private UUID classPackageId;
+    private String status;
     private int remainingClasses;
     private int totalClasses;
     private BigDecimal price;
@@ -116,5 +117,13 @@ public class CustomerPackageDTO {
 
     public void setClassPackageName(String classPackageName) {
         this.classPackageName = classPackageName;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

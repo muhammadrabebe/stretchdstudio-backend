@@ -24,6 +24,9 @@ public class Class {
     @Column(name = "maxcapacity")
     private Integer maxCapacity;
 
+    @Column(name = "currentBookingCount")
+    private Integer currentBookingCount;
+
     @Column(name = "location")
     private String location;
 
@@ -243,5 +246,13 @@ public class Class {
 
     public void setClassType(ClassType classType) {
         this.classType = classType;
+    }
+
+    public Integer getCurrentBookingCount() {
+        return currentBookingCount;
+    }
+
+    public void setCurrentBookingCount(Integer currentBookingCount) {
+        this.currentBookingCount = currentBookingCount;
     }
 }

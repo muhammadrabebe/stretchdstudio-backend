@@ -4,6 +4,7 @@ import com.strechdstudio.app.dto.ApiResponse;
 import com.strechdstudio.app.dto.BookingDTO;
 import com.strechdstudio.app.dto.ClassDTO;
 import com.strechdstudio.app.model.Booking;
+import com.strechdstudio.app.model.Order;
 import com.strechdstudio.app.service.BookingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/bookings")
@@ -52,6 +54,14 @@ public class BookingController {
     // Get booking by ID
     @GetMapping("/{bookingId}")
     public ResponseEntity<ApiResponse<BookingDTO>> getBookingById(@PathVariable Integer bookingId) {
+        BookingDTO bookingDTO = bookingService.getBookingById(bookingId);
+        ApiResponse<BookingDTO> response = new ApiResponse<>("success", 200, bookingDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    // Get booking by ID
+    @GetMapping("/dashboard/{bookingId}")
+    public ResponseEntity<ApiResponse<BookingDTO>> getBookingDashboardById(@PathVariable Integer bookingId) {
         BookingDTO bookingDTO = bookingService.getBookingById(bookingId);
         ApiResponse<BookingDTO> response = new ApiResponse<>("success", 200, bookingDTO);
         return ResponseEntity.status(HttpStatus.OK).body(response);
@@ -114,6 +124,12 @@ public class BookingController {
         bookingService.deleteBooking(bookingId);
         ApiResponse<String> response = new ApiResponse<>("success", 200, "Booking deleted successfully");
         return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/updateStatus/{bookingId}/{status}")
+    public ResponseEntity<ApiResponse<Order>> updateStatus(@PathVariable int bookingId, @PathVariable String status) {
+        Booking updated = bookingService.updateBookingStatus(bookingId, status);
+        return ResponseEntity.ok(new ApiResponse<>("Status has been updated to " + status, 200, null));
     }
 
 //    @GetMapping("/active/count")

@@ -16,11 +16,6 @@ public class JwtUtil {
     @Value("${jwt.secret}") // Load the key from application.properties
     private String secretKey;
 
-//    private SecretKey getSigningKey() {
-//        byte[] keyBytes = Base64.getDecoder().decode(secretKey); // Properly decode the key
-//        return Keys.hmacShaKeyFor(keyBytes);
-//    }
-
     private SecretKey getSigningKey() {
         byte[] keyBytes;
         try {

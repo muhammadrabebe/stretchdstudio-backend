@@ -3,11 +3,8 @@ package com.strechdstudio.app.service;
 import com.strechdstudio.app.dto.BookingDTO;
 import com.strechdstudio.app.dto.ClassDTO;
 import com.strechdstudio.app.dto.ClassPackageDTO;
-import com.strechdstudio.app.model.Booking;
+import com.strechdstudio.app.model.*;
 import com.strechdstudio.app.model.Class;
-import com.strechdstudio.app.model.CodeLkup;
-import com.strechdstudio.app.model.Customer;
-import com.strechdstudio.app.model.Instructor;
 import com.strechdstudio.app.repository.*;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,11 +25,15 @@ public class BookingService {
     @Autowired
     public CustomerRepository customerRepository;
     @Autowired
+    public CustomerPackageRepository customerPackageRepository;
+    @Autowired
     public InstructorRepository instructorRepository;
     @Autowired
     public CodeLkupRepository codeLkupRepository;
     @Autowired
     public ClassRepository classRepository;
+    @Autowired
+    public ClassTypeRepository classTypeRepository;
 
     // Get all bookings with details
     public List<Booking> getAllBookingsWithDetails() {
@@ -50,7 +51,7 @@ public class BookingService {
 
     // get all upcoming bookings
     public List<ClassDTO> getUpcomingBookings(Integer customerId) {
-        return bookingRepository.findUpcomingBookedClassesByCustomer(customerId,LocalDateTime.now())
+        return bookingRepository.findUpcomingBookedClassesByCustomer(customerId, LocalDateTime.now())
                 .stream()
                 .map(ClassDTO::new)
                 .collect(Collectors.toList());
@@ -58,7 +59,7 @@ public class BookingService {
 
     // get all past bookings
     public List<ClassDTO> getPastBookings(Integer customerId) {
-        return bookingRepository.findPastBookedClassesByCustomer(customerId,LocalDateTime.now())
+        return bookingRepository.findPastBookedClassesByCustomer(customerId, LocalDateTime.now())
                 .stream()
                 .map(ClassDTO::new)
                 .collect(Collectors.toList());
@@ -66,7 +67,7 @@ public class BookingService {
 
     // get all upcoming bookings
     public List<ClassDTO> getNextUpcomingBookedClass(Integer customerId) {
-        return bookingRepository.findTopBookedClassesByCustomer(customerId,LocalDateTime.now())
+        return bookingRepository.findTopBookedClassesByCustomer(customerId, LocalDateTime.now())
                 .stream()
                 .map(ClassDTO::new)
                 .collect(Collectors.toList());
@@ -79,7 +80,6 @@ public class BookingService {
     }
 
 
-
     public BookingDTO createBooking(BookingDTO bookingDTO) {
         // Convert DTO to entity
         LocalDateTime currentDate = LocalDateTime.now();
@@ -89,7 +89,7 @@ public class BookingService {
                 .orElseThrow(() -> new EntityNotFoundException("Customer not found"));
         Class bookedClass = classRepository.findById(bookingDTO.getClassId())
                 .orElseThrow(() -> new EntityNotFoundException("Class not found"));
-        CodeLkup status = codeLkupRepository.findByCodelist_ListNameAndCode("BOOKINGSTATUS","Booked")
+        CodeLkup status = codeLkupRepository.findByCodelist_ListNameAndCode("BOOKINGSTATUS", "Booked")
                 .orElseThrow(() -> new EntityNotFoundException("Status not found"));
         Instructor instructor = instructorRepository.findById(bookedClass.getInstructor().getInstructorId())
                 .orElseThrow(() -> new EntityNotFoundException("Instructor not found"));
@@ -106,12 +106,15 @@ public class BookingService {
         currentBooking.setBookedClass(bookedClass);
         currentBooking.setStatus(status);
         currentBooking.setInstructor(instructor);
-        currentBooking.setAddWho(bookingDTO.getAddWho());
+        currentBooking.setAddWho(customer.getFullname());
         currentBooking.setAddDate(currentDate);
-        currentBooking.setEditWho(bookingDTO.getAddWho());
+        currentBooking.setEditWho(customer.getFullname());
         currentBooking.setEditDate(currentDate);
 
         Booking savedBooking = bookingRepository.save(currentBooking);
+
+        // update the count of the booked class
+        updateBookedClass(customer, bookedClass);
 
         // Return DTO
         return new BookingDTO(savedBooking);
@@ -121,11 +124,41 @@ public class BookingService {
     public BookingDTO updateBooking(Integer bookingId, BookingDTO bookingDTO) {
         Booking existingBooking = bookingRepository.findById(bookingId).orElseThrow(() -> new EntityNotFoundException("Booking not found"));
 
+        CodeLkup attendedStatus = codeLkupRepository.findByCodelist_ListNameAndCode("BOOKINGSTATUS", "Attended")
+                .orElseThrow(() -> new EntityNotFoundException("Attended status not found"));
+
+        Class bookedClass = classRepository.findById(bookingDTO.getClassId()).orElseThrow(() -> new EntityNotFoundException("Class not found"));
+        Customer customer = customerRepository.findById(bookingDTO.getCustomerId()).orElseThrow(() -> new EntityNotFoundException("Customer not found"));
+
         // Update fields
-        existingBooking.setCustomer(customerRepository.findById(bookingDTO.getCustomerId()).orElseThrow(() -> new EntityNotFoundException("Customer not found")));
-        existingBooking.setBookedClass(classRepository.findById(bookingDTO.getClassId()).orElseThrow(() -> new EntityNotFoundException("Class not found")));
-        existingBooking.setStatus(codeLkupRepository.findById(bookingDTO.getStatusId()).orElseThrow(() -> new EntityNotFoundException("Status not found")));
+        existingBooking.setCustomer(customer);
+        existingBooking.setBookedClass(bookedClass);
         existingBooking.setInstructor(instructorRepository.findById(bookingDTO.getInstructorId()).orElseThrow(() -> new EntityNotFoundException("Instructor not found")));
+
+        CodeLkup updatedStatus = codeLkupRepository.findById(bookingDTO.getStatusId()).orElseThrow(() -> new EntityNotFoundException("Status not found"));
+        // check if it is updated to attended in order to count the class
+        if (updatedStatus.getCode().equals(attendedStatus.getCode())) {
+            // update customer field
+            customer.setTotalClassesAttended(customer.getTotalClassesAttended() + 1);
+            customerRepository.save(customer);
+
+            // update customer package
+
+//            Optional<CustomerPackage> optionalPackage = customerPackageRepository.findByCustomerAndClasstype(customer, bookedClass.getClassType());
+//
+//            optionalPackage.ifPresent(customerPackage -> {
+//                int remaining = customerPackage.getRemainingClasses();
+//                String bookedType = bookedClass.getClassType().getType();
+//                String packageType = customerPackage.getClassPackage().getClassType().getType();
+//
+//                if (remaining > 1 && packageType.equals(bookedType)) {
+//                    customerPackage.setRemainingClasses(remaining - 1);
+//                }
+//            });
+
+
+        }
+
 
         // Save the updated booking
         Booking updatedBooking = bookingRepository.save(existingBooking);
@@ -167,6 +200,72 @@ public class BookingService {
         }
 
         return bookings.stream().map(BookingDTO::new).collect(Collectors.toList());
+    }
+
+    public void updateBookedClass(Customer customer, Class bookedClass) {
+        bookedClass.setCurrentBookingCount(bookedClass.getCurrentBookingCount() + 1);
+        if (bookedClass.getMaxCapacity().equals(bookedClass.getCurrentBookingCount())) {
+            // check if the class reached the max so we update the status to waitlist.
+            CodeLkup waitlistStatus = codeLkupRepository.findByCodelist_ListNameAndCode("CLASSSTATUS", "Waitlist")
+                    .orElseThrow(() -> new RuntimeException("Status not found"));
+            bookedClass.setStatus(waitlistStatus);
+        }
+        // get the class type of the booked class
+        ClassType classType = bookedClass.getClassType();
+
+        CodeLkup validStatus = codeLkupRepository.findByCodelist_ListNameAndCode("CUSTOMERPACKAGESTATUS", "Valid")
+                .orElseThrow(() -> new RuntimeException("Valid status not found"));
+
+        // 2. Get active customer package for that class type
+        CustomerPackage customerPackage = customerPackageRepository
+                .findByCustomerAndClassTypeAndStatusId(customer.getCustomerId(), classType.getTypeId(), validStatus.getCodeLkupId());
+
+        if (customerPackage != null){
+            customerPackage.setRemainingClasses(customerPackage.getRemainingClasses() - 1);
+
+            // 5. Optionally update status to Completed
+            if (customerPackage.getRemainingClasses() == 0) {
+                CodeLkup completedStatus = codeLkupRepository
+                        .findByCodelist_ListNameAndCode("CUSTOMERPACKAGESTATUS", "Completed")
+                        .orElseThrow(null);
+                customerPackage.setStatus(completedStatus);
+            }
+
+            customerPackageRepository.save(customerPackage);
+        }
+
+        classRepository.save(bookedClass);
+    }
+
+    public Booking updateBookingStatus(int bookingId, String status) {
+        // Fetch the new status CodeLkup
+        CodeLkup bookingStatus = codeLkupRepository.findByCodelist_ListNameAndCode("BOOKINGSTATUS", status)
+                .orElseThrow(() -> new EntityNotFoundException(status + " status not found"));
+
+        // Get current order
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new RuntimeException("Booking not found."));
+
+        String currentStatus = booking.getStatus().getCode();
+
+//        // Define allowed transitions
+//        if (currentStatus.equalsIgnoreCase("pending")) {
+//            if (!newStatus.equalsIgnoreCase("paid")) {
+//                throw new RuntimeException("Invalid status transition: Pending can only be updated to Paid.");
+//            }
+//        } else if (currentStatus.equalsIgnoreCase("paid")) {
+//            if(newStatus.equalsIgnoreCase("paid"))
+//                throw new RuntimeException("The order is already paid.");
+//            else if (!newStatus.equalsIgnoreCase("cancelled"))
+//                throw new RuntimeException("The order is paid, you can't change it.");
+//        } else {
+//            throw new RuntimeException("Status update not allowed from status: " + currentStatus);
+//        }
+
+        // Update and save
+        booking.setStatus(bookingStatus);
+        booking.setEditDate(LocalDateTime.now());
+        return bookingRepository.save(booking);
     }
 
 //    public List<BookingDTO> getLast5Bookings() {

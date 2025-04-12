@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-    @RequestMapping("/customerPackages")
+@RequestMapping("/customerPackages")
 public class CustomerPackageController {
     @Autowired
     private CustomerPackageService customerPackageService;
@@ -30,7 +30,7 @@ public class CustomerPackageController {
         return ResponseEntity.ok(new ApiResponse<>("Customer packages retrieved successfully", 200, customerPackages));
     }
 
-        @GetMapping("/customer/{customerId}/latest-valid-package")
+    @GetMapping("/customer/{customerId}/latest-valid-package")
     public ResponseEntity<ApiResponse<CustomerPackageDTO>> getNewestValidCustomerPackage(@PathVariable Integer customerId) {
         CustomerPackageDTO customerPackage = customerPackageService.getNewestValidCustomerPackage(customerId);
         return ResponseEntity.ok(new ApiResponse<>("Latest valid customer package retrieved successfully", 200, customerPackage));
@@ -47,13 +47,8 @@ public class CustomerPackageController {
 
     @PostMapping("/purchase/{customerId}/{packageId}")
     public ResponseEntity<ApiResponse<String>> purchasePackage(@PathVariable Integer customerId, @PathVariable UUID packageId) {
-        try {
-            customerPackageService.purchaseClassPackage(customerId, packageId);
-            return ResponseEntity.ok(new ApiResponse<>("Package purchased successfully", 200, null));
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ApiResponse<>(e.getMessage(), 400, null));
-        }
+        customerPackageService.purchaseClassPackage(customerId, packageId);
+        return ResponseEntity.ok(new ApiResponse<>("Package purchased successfully", 200, null));
     }
 
 

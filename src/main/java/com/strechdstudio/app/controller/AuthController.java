@@ -1,8 +1,6 @@
 package com.strechdstudio.app.controller;
 
-import com.strechdstudio.app.dto.ApiResponse;
-import com.strechdstudio.app.dto.LoginRequest;
-import com.strechdstudio.app.dto.RegisterRequest;
+import com.strechdstudio.app.dto.*;
 import com.strechdstudio.app.model.User;
 import com.strechdstudio.app.service.AuthService;
 import com.strechdstudio.app.util.JwtUtil;
@@ -30,24 +28,36 @@ public class AuthController {
     @Autowired
     private JwtUtil jwtUtil;
 
+    @PostMapping("/validate")
+    public ResponseEntity<ApiResponse<ValidateResponse>> validateUser(@RequestBody ValidateRequest validateRequest) {
+        ValidateResponse response = authService.checkUserExists(validateRequest);
+
+        if (response.getUserExists()) {
+            return ResponseEntity.ok(new ApiResponse<>("User exists", 200, response));
+        } else {
+            return ResponseEntity.status(404).body(new ApiResponse<>("User not found", 404, response));
+        }
+    }
+
+
+
     // Login Endpoint
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse<String>> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<ApiResponse<LoginResponse>> login(@RequestBody LoginRequest loginRequest) {
         try {
-            String token = authService.authenticateAndGenerateToken(loginRequest);
-            ApiResponse<String> response = new ApiResponse<>("Login successful", 200, token);
+            LoginResponse loginResponse = authService.authenticateAndGenerateToken(loginRequest);
+            ApiResponse<LoginResponse> response = new ApiResponse<>("Login successful", 200, loginResponse);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            ApiResponse<String> response = new ApiResponse<>(e.getMessage(), 401, null);
-            return ResponseEntity.status(401).body(response);
+            return ResponseEntity.status(400).body(new ApiResponse<>(e.getMessage(), 400, null));
         }
     }
 
     // Logout Endpoint
     @PostMapping("/logout")
-    public ResponseEntity<ApiResponse<String>> logout(@RequestParam String username) {
+    public ResponseEntity<ApiResponse<String>> logout(@RequestParam UUID userId) {
         try {
-            authService.logout(username);
+            authService.logout(userId);
             ApiResponse<String> response = new ApiResponse<>("Logout successful", 200, null);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
@@ -57,20 +67,12 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<ApiResponse> register(@RequestBody RegisterRequest registerRequest) {
+    public ResponseEntity<ApiResponse<RegisterResponse>> register(@RequestBody RegisterRequest registerRequest) {
         // Register the user (this part depends on your registration logic)
-        User user = authService.registerUser(registerRequest);
-
-        // After registration, authenticate the user
-//        Authentication authentication = authenticationManager.authenticate(
-//                new UsernamePasswordAuthenticationToken(user.getUsername(), registerRequest.getPassword())
-//        );
-
-        // Generate JWT token
-        String jwtToken = jwtUtil.generateToken(user);
+        RegisterResponse registerResponse = authService.registerUser(registerRequest);
 
         // Send the response with the token
-        ApiResponse<String> response = new ApiResponse<>("Registration successful", 200, jwtToken);
+        ApiResponse<RegisterResponse> response = new ApiResponse<>("Registration successful", 200, registerResponse);
         return ResponseEntity.ok(response);
     }
 }

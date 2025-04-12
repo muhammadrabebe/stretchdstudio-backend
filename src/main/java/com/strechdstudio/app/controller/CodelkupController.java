@@ -23,7 +23,7 @@ public class CodelkupController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<CodelkupDTO>>>getAllCodelkups(){
+    public ResponseEntity<ApiResponse<List<CodelkupDTO>>> getAllCodelkups() {
         List<CodelkupDTO> codeLkupList = codelkupService.getAllCodeLookups();
         ApiResponse<List<CodelkupDTO>> response = new ApiResponse<>("success", 200, codeLkupList);
         return ResponseEntity.ok(response);
@@ -41,21 +41,44 @@ public class CodelkupController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/byId/{id}")
+    public ResponseEntity<ApiResponse<CodelkupDTO>> getCodelkupById(@PathVariable Integer id) {
+        CodelkupDTO codelkupDTO = codelkupService.getCodelkupById(id);
+        return ResponseEntity.ok(new ApiResponse<>("Success", 200, codelkupDTO));
+    }
+
+//    @PostMapping
+//    public CodeLkup saveCodelkup(@RequestBody  CodeLkup codeLkup){
+//        return codelkupService.saveCodelkup(codeLkup);
+//    }
+
     @PostMapping
-    public CodeLkup saveCodelkup(@RequestBody  CodeLkup codeLkup){
-        return codelkupService.saveCodelkup(codeLkup);
+    public ResponseEntity<ApiResponse<CodeLkup>> saveCodelkup(@RequestBody CodelkupDTO codelkupDTO) {
+        return ResponseEntity
+                .ok(new ApiResponse<>("Code " + codelkupDTO.getCode() + " has been created successfully.", 200, codelkupService.saveCodelkup(codelkupDTO)));
     }
 
-    @PutMapping("/update")
-    public ResponseEntity<CodelkupDTO> updateCodelkup(@RequestBody CodelkupDTO codeLkupDTO) {
-        CodeLkup updatedCodelkup = codelkupService.updateCodelkup(codeLkupDTO);
-        return ResponseEntity.ok(convertToDto(updatedCodelkup));
+    @PutMapping("/{id}")
+    public ResponseEntity<ApiResponse<CodeLkup>> update(@PathVariable Integer id, @RequestBody CodelkupDTO codelkupDTO) {
+        return ResponseEntity.ok(new ApiResponse<>("Updated", 200, codelkupService.updateCodelkup(id, codelkupDTO)));
     }
 
-    @DeleteMapping("{codelkupId}")
-    public void deleteCodelkup(@PathVariable Integer codelkupId){
-         codelkupService.deleteCodelkup(codelkupId);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiResponse<String>> delete(@PathVariable Integer id) {
+        codelkupService.deleteCodelkup(id);
+        return ResponseEntity.ok(new ApiResponse<>("Deleted", 200, "Code lookup deleted"));
     }
+
+//    @PutMapping("/update")
+//    public ResponseEntity<CodelkupDTO> updateCodelkup(@RequestBody CodelkupDTO codeLkupDTO) {
+//        CodeLkup updatedCodelkup = codelkupService.updateCodelkup(codeLkupDTO);
+//        return ResponseEntity.ok(convertToDto(updatedCodelkup));
+//    }
+//
+//    @DeleteMapping("{codelkupId}")
+//    public void deleteCodelkup(@PathVariable Integer codelkupId) {
+//        codelkupService.deleteCodelkup(codelkupId);
+//    }
 
     private CodelkupDTO convertToDto(CodeLkup codeLkup) {
         CodelkupDTO dto = new CodelkupDTO();

@@ -38,39 +38,30 @@ public class CodelistController {
         return ResponseEntity.ok(response);
     }
 
-    // Create a new code list
-//    @PostMapping
-//    public ResponseEntity<ApiResponse<Codelist>> createCodeList(@RequestBody Codelist codelist) {
-//        Codelist savedCodeList = codelistService.saveCodeList(codelist);
-//
-//        if (savedCodeList == null) {
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-//                    .body(new ApiResponse<>("Failed to save code list", 400, null));
-//        }
-//
-//        ApiResponse<Codelist> response = new ApiResponse<>("Code list saved successfully", 200, savedCodeList);
-//        return ResponseEntity.ok(response);
-//    }
+    // 📥 Create a new codelist
+    @PostMapping
+    public ResponseEntity<ApiResponse<Codelist>> createCodelist(@RequestBody Codelist codelist) {
+        Codelist created = codelistService.createCodelist(codelist);
+        ApiResponse<Codelist> response = new ApiResponse<>("Codelist " + codelist.getListName() + "has been created successfully." , 200, created);
+        return ResponseEntity.ok(response);
+    }
 
-    // Update an existing code list
-//    @PutMapping("/{codeListId}")
-//    public ResponseEntity<ApiResponse<Codelist>> updateCodeList(@PathVariable Integer codeListId, @RequestBody Codelist codeListDTO) {
-//        Codelist udpatedCodelist = codelistService.updateCodeList(codeListId, codeListDTO);
-//        ApiResponse<Codelist> response = new ApiResponse<>("Code list updated successfully", 200, udpatedCodelist);
-//        return ResponseEntity.ok(response);
-//    }
+    // ✏️ Update a codelist
+    @PutMapping("/{codelistId}")
+    public ResponseEntity<ApiResponse<Codelist>> updateCodelist(
+            @PathVariable Integer codelistId,
+            @RequestBody Codelist codelist) {
+        Codelist updated = codelistService.updateCodelist(codelistId, codelist);
+        ApiResponse<Codelist> response = new ApiResponse<>("Updated", 200, updated);
+        return ResponseEntity.ok(response);
+    }
 
     // Delete a code list
-//    @DeleteMapping("/{codeListId}")
-//    public ResponseEntity<ApiResponse<Void>> deleteCodeList(@PathVariable Integer codeListId) {
-//        try {
-//            codelistService.deleteCodeList(codeListId);
-//            ApiResponse<Void> response = new ApiResponse<>("Code list deleted successfully", 200, null);
-//            return ResponseEntity.ok(response);
-//        } catch (Exception e) {
-//            ApiResponse<Void> response = new ApiResponse<>("Failed to delete code list: " + e.getMessage(), 400, null);
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-//        }
-//    }
+    @DeleteMapping("/{codelistId}")
+    public ResponseEntity<ApiResponse<String>> deleteCodelist(@PathVariable Integer codelistId) {
+        codelistService.deleteCodelist(codelistId);
+        ApiResponse<String> response = new ApiResponse<>("Codelist has been deleted successfully", 200, "Codelist deleted");
+        return ResponseEntity.ok(response);
+    }
 
 }

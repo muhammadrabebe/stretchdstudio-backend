@@ -30,6 +30,9 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String password;  // Password field
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Customer customer;
+
     @Column(nullable = false)
     private boolean isActive;  // Active flag
 
@@ -149,6 +152,14 @@ public class User implements UserDetails {
 
     public void setEditDate(LocalDateTime editDate) {
         this.editDate = editDate;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
 }
 

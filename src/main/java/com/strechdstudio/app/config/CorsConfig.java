@@ -14,7 +14,10 @@ public class CorsConfig {
     @Bean
     public CorsFilter corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("*")); // Add Mac IP address here
+
+        // Allow all origins (including Postman)
+        config.addAllowedOriginPattern("*");  // Use this instead of setAllowedOrigins
+
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("Content-Type", "Authorization"));
         config.setAllowCredentials(true); // Allow cookies if needed
@@ -24,4 +27,5 @@ public class CorsConfig {
 
         return new CorsFilter(source);
     }
+
 }

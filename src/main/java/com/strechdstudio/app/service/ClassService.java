@@ -96,6 +96,7 @@ public class ClassService {
         currentClass.setStartTime(classDTO.getStartTime());
         currentClass.setEndTime(classDTO.getEndTime());
         currentClass.setMaxCapacity(classDTO.getMaxCapacity());
+        currentClass.setCurrentBookingCount(0);
         currentClass.setLocation(classDTO.getLocation());
         currentClass.setAddressOne(classDTO.getAddressOne());
         currentClass.setAddressTwo(classDTO.getAddressTwo());

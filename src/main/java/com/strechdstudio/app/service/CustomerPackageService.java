@@ -2,15 +2,16 @@ package com.strechdstudio.app.service;
 
 import com.strechdstudio.app.dto.CustomerPackageDTO;
 import com.strechdstudio.app.model.ClassPackage;
+import com.strechdstudio.app.model.CodeLkup;
 import com.strechdstudio.app.model.Customer;
 import com.strechdstudio.app.model.CustomerPackage;
 import com.strechdstudio.app.repository.ClassPackageRepository;
+import com.strechdstudio.app.repository.CodeLkupRepository;
 import com.strechdstudio.app.repository.CustomerPackageRepository;
 import com.strechdstudio.app.repository.CustomerRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -29,6 +30,9 @@ public class CustomerPackageService {
     @Autowired
     private CustomerRepository customerRepository;
 
+    @Autowired
+    private CodeLkupRepository codeLkupRepository;
+
     public List<CustomerPackageDTO> getAllCustomerPackages() {
         return customerPackageRepository.findAll()
                 .stream()
@@ -41,6 +45,7 @@ public class CustomerPackageService {
                     dto.setClassPackageName(customerPackage.getClassPackage().getName());
                     dto.setPurchaseDate(customerPackage.getPurchaseDate());
                     dto.setRemainingClasses(customerPackage.getRemainingClasses());
+                    dto.setStatus(customerPackage.getStatus().getCode());
                     // Set other DTO properties as needed
                     return dto;
                 })
@@ -60,6 +65,9 @@ public class CustomerPackageService {
         ClassPackage classPackage = classPackageRepository.findById(classPackageId)
                 .orElseThrow(() -> new RuntimeException("classPackage not found"));
 
+        CodeLkup validStatus = codeLkupRepository.findByCodelist_ListNameAndCode("CUSTOMERPACKAGESTATUS", "Valid")
+                .orElseThrow(() -> new EntityNotFoundException("Valid status not found"));
+
         // Validate if the customer has already purchased this package
         CustomerPackage existingPurchase = customerPackageRepository.findByCustomerAndClassPackage(customer, classPackage);
         if (existingPurchase != null)
@@ -73,6 +81,7 @@ public class CustomerPackageService {
         currentCustomerPackage.setCustomer(customer); // Set the fetched customer entity
         currentCustomerPackage.setClassPackage(classPackage); // Set the fetched class package entity
         currentCustomerPackage.setRemainingClasses(classPackage.getTotalClasses());
+        currentCustomerPackage.setStatus(validStatus);
         currentCustomerPackage.setPurchaseDate(currentDate);
 
         // Save and return the customer package
@@ -96,6 +105,7 @@ public class CustomerPackageService {
                     CustomerPackageDTO dto = new CustomerPackageDTO();
                     dto.setCustomerPackageId(customerPackage.getCustomerPackageId());
                     dto.setCustomerId(customerPackage.getCustomer().getCustomerId());
+                    dto.setStatus(customerPackage.getStatus().getCode());
                     dto.setCustomerName(customerPackage.getCustomer().getFirstName() + " " + customerPackage.getCustomer().getLastName());
                     dto.setClassPackageId(customerPackage.getClassPackage().getclassPackageId());
                     dto.setClassPackageName(customerPackage.getClassPackage().getName());

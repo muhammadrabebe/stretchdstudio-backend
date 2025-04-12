@@ -13,6 +13,7 @@ public class ClassDTO {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private Integer maxCapacity;
+    private Integer currentBookingCount;
     private String location;
     private String addWho;
     private LocalDateTime addDate;
@@ -47,6 +48,7 @@ public class ClassDTO {
         this.formattedStartTime = DateTimeUtils.formatDateTime(c.getStartTime());
         this.formattedEndTime = DateTimeUtils.formatDateTime(c.getEndTime());
         this.maxCapacity = c.getMaxCapacity();
+        this.currentBookingCount = c.getCurrentBookingCount();
         this.location = c.getLocation();
         this.instructorId = c.getInstructor() != null ? c.getInstructor().getInstructorId() : null;
         this.branchId = c.getBranch() != null ? c.getBranch().getCodeLkupId() : null;
@@ -284,5 +286,13 @@ public class ClassDTO {
 
     public void setClassTypeName(String classTypeName) {
         this.classTypeName = classTypeName;
+    }
+
+    public Integer getCurrentBookingCount() {
+        return currentBookingCount;
+    }
+
+    public void setCurrentBookingCount(Integer currentBookingCount) {
+        this.currentBookingCount = currentBookingCount;
     }
 }

@@ -1,7 +1,10 @@
 package com.strechdstudio.app.dto;
 
 import com.strechdstudio.app.model.Booking;
+import com.strechdstudio.app.util.DateTimeUtils;
+import com.strechdstudio.app.util.StringFormatter;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 public class BookingDTO {
@@ -13,8 +16,13 @@ public class BookingDTO {
     private String className;
     private String instructorName;
     private String customerName;
+    private String customerPhoneNumber;
     private String status;
+    private String classDuration;
     private LocalDateTime startTime;
+    private String classDate;
+    private String bookingDate;
+    private LocalDateTime endTime;
     private String addWho; // New field
     private LocalDateTime addDate; // New field
     private String editWho; // New field
@@ -31,9 +39,30 @@ public class BookingDTO {
         this.instructorId = booking.getInstructor().getInstructorId(); // Set instructorId
         this.instructorName = booking.getInstructor().getFullname();
         this.customerName = booking.getCustomer().getFullname();
+        this.customerPhoneNumber = StringFormatter.formatPhoneNumber(booking.getCustomer().getPhoneNumber());
         this.className = booking.getBookedClass().getClassName();
         this.status = booking.getStatus().getCode();
         this.startTime = booking.getBookedClass().getStartTime();
+        this.classDate = DateTimeUtils.formatDateTime(booking.getBookedClass().getStartTime());
+        this.bookingDate = DateTimeUtils.formatDateTime(booking.getAddDate());
+        this.endTime = booking.getBookedClass().getEndTime(); // Get endTime
+
+        // Calculate class duration
+        if (startTime != null && endTime != null) {
+            Duration duration = Duration.between(startTime, endTime);
+            long hours = duration.toHours();
+            long minutes = duration.toMinutesPart();
+            if (hours == 1){
+                this.classDuration = String.format("%d hour", hours);
+            }else if (hours > 0) {
+                this.classDuration = String.format("%d hour%s %d mins", hours, hours > 1 ? "s" : "", minutes);
+            } else {
+                this.classDuration = String.format("%d mins", minutes);
+            }
+        } else {
+            this.classDuration = "Unknown";
+        }
+
         this.addWho = booking.getAddWho();
         this.addDate = booking.getAddDate();
         this.editWho = booking.getEditWho();
@@ -57,6 +86,47 @@ public class BookingDTO {
 //        this.editWho = editWho;
 //        this.editDate = editDate;
 //    }
+
+
+    public String getCustomerPhoneNumber() {
+        return customerPhoneNumber;
+    }
+
+    public void setCustomerPhoneNumber(String customerPhoneNumber) {
+        this.customerPhoneNumber = customerPhoneNumber;
+    }
+
+    public String getClassDate() {
+        return classDate;
+    }
+
+    public void setClassDate(String classDate) {
+        this.classDate = classDate;
+    }
+
+    public String getBookingDate() {
+        return bookingDate;
+    }
+
+    public void setBookingDate(String bookingDate) {
+        this.bookingDate = bookingDate;
+    }
+
+    public LocalDateTime getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
+    }
+
+    public String getClassDuration() {
+        return classDuration;
+    }
+
+    public void setClassDuration(String classDuration) {
+        this.classDuration = classDuration;
+    }
 
     public Integer getBookingId() {
         return bookingId;

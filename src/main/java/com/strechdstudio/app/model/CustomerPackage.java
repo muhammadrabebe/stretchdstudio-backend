@@ -21,6 +21,10 @@ public class CustomerPackage {
     @JoinColumn(name = "classPackageId", nullable = false)
     private ClassPackage classPackage;
 
+    @ManyToOne
+    @JoinColumn(name = "statusId", nullable = false)
+    private CodeLkup status;
+
     private int remainingClasses;
     private LocalDateTime purchaseDate = LocalDateTime.now();
 
@@ -62,5 +66,13 @@ public class CustomerPackage {
 
     public void setPurchaseDate(LocalDateTime purchaseDate) {
         this.purchaseDate = purchaseDate;
+    }
+
+    public CodeLkup getStatus() {
+        return status;
+    }
+
+    public void setStatus(CodeLkup status) {
+        this.status = status;
     }
 }
